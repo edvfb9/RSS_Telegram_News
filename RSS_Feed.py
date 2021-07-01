@@ -4,6 +4,7 @@ import datetime
 import re
 import logging
 import requests
+from Chat_Id import chats
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -15,10 +16,9 @@ logger = logging.getLogger(__name__)
 started = False
 news_content = []
 api_key = "key"
-chat_id = 1
 refresh = 15 # refresh interval in minutes
 
-def send_message(message):
+def send_message(message, chat_id):
     requests.get(f'https://api.telegram.org/bot{api_key}/sendMessage?chat_id={chat_id}&text={message}')
 
 def get_config():
@@ -59,6 +59,7 @@ def determine_send(link, entry):
 
 if __name__=="__main__":
     started = False
+    chat = chats()
     while True:
         news_links = []
         try:
@@ -67,6 +68,7 @@ if __name__=="__main__":
             print(e)
         now = datetime.datetime.now()
         if now.hour > 7 and now.hour < 22:
+            chat.get_new_chats(api_key)
             for link in news_links:
                 NewsFeed = feedparser.parse(link[0])
                 for entry in NewsFeed.entries:
@@ -75,7 +77,8 @@ if __name__=="__main__":
                         news_content.append(entry)
                         if started and determine_send(link, entry):
                             print(entry.title)
-                            send_message(entry.title + "\n\n" + entry.summary)
+                            for chat_id in chat.get_chats():
+                                send_message(entry.title + "\n\n" + entry.summary, chat_id)
                             
             started = True
             print("Checked", now)
