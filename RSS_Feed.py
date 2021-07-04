@@ -4,7 +4,8 @@ import datetime
 import re
 import logging
 import requests
-from Chat_Id import chats
+from Database import Data
+from Update import get_update
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -56,10 +57,21 @@ def determine_send(link, entry):
 
     return False
 
+def process_news(news_links):
+    for link in news_links:
+        NewsFeed = feedparser.parse(link[0])
+        for entry in NewsFeed.entries:
+            tag_matches = []
+            if entry not in news_content:
+                news_content.append(entry)
+                if started and determine_send(link, entry):
+                    print(entry.title)
+                    for chat_id in data.get_chats():
+                        send_message(entry.title + "\n\n" + entry.summary + "\n\n" + str(entry.link), chat_id)
 
 if __name__=="__main__":
     started = False
-    chat = chats()
+    data = Data()
     while True:
         news_links = []
         try:
@@ -68,17 +80,8 @@ if __name__=="__main__":
             print(e)
         now = datetime.datetime.now()
         if now.hour > 7 and now.hour < 22:
-            chat.get_new_chats(api_key)
-            for link in news_links:
-                NewsFeed = feedparser.parse(link[0])
-                for entry in NewsFeed.entries:
-                    tag_matches = []
-                    if entry not in news_content:
-                        news_content.append(entry)
-                        if started and determine_send(link, entry):
-                            print(entry.title)
-                            for chat_id in chat.get_chats():
-                                send_message(entry.title + "\n\n" + entry.summary, chat_id)
+            get_update(data, api_key)
+            process_news(news_links)
                             
             started = True
             print("Checked", now)

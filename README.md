@@ -9,8 +9,7 @@ But because some rss feeds are also posting stuff which is of no interest to me,
 
 ### Multiple User Support
 
-I also added a feature which enables multiple users to subscribe to the RSS News Bot on their own and receive all the news as well. This is achieved by storing all the chat ids in an sqlite database which is managed in the Chat_Id.py file. To subscribe to the RSS Bot one simply has to text a random message to the bot.
+I also added a feature which enables multiple users to subscribe to the RSS News Bot on their own and receive all the news as well. This is achieved by storing all the chat ids in an sqlite database which is managed in the Chat_Id.py file. To subscribe to the RSS Bot one simply has to text a random message to the bot. To unsubscribe from the RSS Bot one has to simply send a message containing "unsubscribe".
 
 ### TO-DO: 
-    - Option to unsubscribe from the bot by texting "unsubscribe"
     - Option to change the database directory and file name in the config.txt file
