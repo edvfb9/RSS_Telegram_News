@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 started = False
 news_content = []
-api_key = "key"
+api_key = "1719127362:AAHdj6G6K0NOesiTMmZ0qMIpC37CglIDy1U"
 refresh = 15 # refresh interval in minutes
 
 def send_message(message, chat_id):
