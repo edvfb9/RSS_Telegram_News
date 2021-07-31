@@ -57,20 +57,19 @@ def determine_send(link, entry):
 
     return False
 
-def process_news(news_links):
+def process_news(news_links, data):
+    news_content = data.get_rss_news()
     for link in news_links:
         NewsFeed = feedparser.parse(link[0])
         for entry in NewsFeed.entries:
-            tag_matches = []
-            if entry not in news_content:
-                news_content.append(entry)
+            if entry.title not in news_content:
+                data.add_rss_news(entry.title)
                 if started and determine_send(link, entry):
                     print(entry.title)
                     for chat_id in data.get_chats():
                         send_message(entry.title + "\n\n" + entry.summary + "\n\n" + str(entry.link), chat_id)
 
 if __name__=="__main__":
-    started = False
     data = Data()
     while True:
         news_links = []
@@ -81,8 +80,6 @@ if __name__=="__main__":
         now = datetime.datetime.now()
         if now.hour > 7 and now.hour < 22:
             get_update(data, api_key)
-            process_news(news_links)
-                            
-            started = True
+            process_news(news_links, data)
             print("Checked", now)
         time.sleep(refresh * 60)
