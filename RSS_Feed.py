@@ -14,8 +14,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-started = False
-news_content = []
 api_key = ""
 refresh = 15 # refresh interval in minutes
 
@@ -62,9 +60,9 @@ def process_news(news_links, data):
     for link in news_links:
         NewsFeed = feedparser.parse(link[0])
         for entry in NewsFeed.entries:
-            if entry.title not in news_content:
-                data.add_rss_news(entry.title)
-                if started and determine_send(link, entry):
+            if str(entry.title).replace("'", "") not in news_content:
+                data.add_rss_news(str(entry.title).replace("'", ""))
+                if determine_send(link, entry):
                     print(entry.title)
                     for chat_id in data.get_chats():
                         send_message(entry.title + "\n\n" + entry.summary + "\n\n" + str(entry.link), chat_id)

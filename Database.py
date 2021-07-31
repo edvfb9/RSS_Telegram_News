@@ -14,6 +14,7 @@ class Data:
         cur.execute('''CREATE TABLE IF NOT EXISTS Users(userId INT PRIMARY KEY)''')
         cur.execute('''CREATE TABLE IF NOT EXISTS RSS_News(title TEXT PRIMARY KEY, Timestamp TEXT)''')
         self.con.commit()
+        cur.close()
 
     def get_chats(self):
         cur = self.con.cursor()
@@ -25,7 +26,7 @@ class Data:
     def add_chats(self, chat_ids):
         cur = self.con.cursor()
         for id in chat_ids:
-            cur.execute('''INSERT INTO Users(''' + str(id) + ')')
+            cur.execute('''INSERT INTO Users VALUES (''' + str(id) + ')')
         self.con.commit()
         cur.close()
 
@@ -46,6 +47,6 @@ class Data:
     def add_rss_news(self, title):
         timestamp = time.time()
         cur = self.con.cursor()
-        cur.execute('''INSERT INTO RSS_News(''' + title + ', ' + str(timestamp) + ')')
+        cur.execute("INSERT INTO RSS_News VALUES('" + title + "','" + str(timestamp) + "')")
         self.con.commit()
         cur.close()
